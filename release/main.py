@@ -1,17 +1,18 @@
 import sys
 import sqlite3
-from PyQt5 import uic
+from release.UI.ui_file_main import Ui_MainWindow
+from release.UI.ui_file_addEditCoffeeForm import Ui_MainWindow1
 from PyQt5.QtWidgets import QApplication, QStyleFactory, QMainWindow, QTableWidgetItem
 
 
-class Window(QMainWindow):
+class Window(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.initUI()
 
     def initUI(self):
-        uic.loadUi('main.ui', self)
-        self.connection = sqlite3.connect("coffee.sqlite")
+        self.setupUi(self)
+        self.connection = sqlite3.connect("data/coffee.sqlite")
         self.pushButton.clicked.connect(self.add_click)
         self.pushButton_2.clicked.connect(self.red_click)
         self.select_data()
@@ -44,18 +45,18 @@ class Window(QMainWindow):
             pass
 
 
-class Add(QMainWindow):
+class Add(QMainWindow, Ui_MainWindow1):
     def __init__(self):
         super().__init__()
         self.initUI()
 
     def initUI(self):
         self.setWindowTitle('Добавление')
-        uic.loadUi('addEditCoffeeForm.ui', self)
+        self.setupUi(self)
         self.pushButton.clicked.connect(self.click)
 
     def click(self):
-        self.con = sqlite3.connect("coffee.sqlite")
+        self.con = sqlite3.connect("data/coffee.sqlite")
         cur = self.con.cursor()
         try:
             cur.execute(f'''INSERT INTO data VALUES ({self.lineEdit_2.text()}, '{self.lineEdit_6.text()}', 
@@ -69,7 +70,7 @@ class Add(QMainWindow):
         self.close()
 
 
-class Red(QMainWindow):
+class Red(QMainWindow, Ui_MainWindow1):
     def __init__(self, row):
         super().__init__()
         self.row = row
@@ -77,9 +78,9 @@ class Red(QMainWindow):
 
     def initUI(self):
         self.setWindowTitle('Редактирование')
-        uic.loadUi('addEditCoffeeForm.ui', self)
+        self.setupUi(self)
         self.pushButton.clicked.connect(self.click)
-        self.con = sqlite3.connect("coffee.sqlite")
+        self.con = sqlite3.connect("data/coffee.sqlite")
         self.res = self.con.cursor().execute(f'''SELECT * FROM data''').fetchall()[self.row]
 
         self.lineEdit_2.setText(str(self.res[0]))
